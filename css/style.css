@@ -125,7 +125,6 @@ input[type="date"] {
     flex-direction: row;
     justify-content: center;
     gap: .625rem;
-    margin: .9375rem;
 }
 
 .card-img-top{
@@ -137,3 +136,20 @@ input[type="date"] {
     color: rgb(35, 124, 35) ;
 }
 
+.fondoFooter {
+    background-color: #4CAF50;
+}
+
+.card{
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.nav-item a{
+    text-decoration: none;
+    color: white;
+}
+
+.nav-item a:hover{
+    color: black;
+}
