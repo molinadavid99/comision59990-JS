@@ -23,19 +23,28 @@ let nombrePropiedad;
 
 function formularioReserva(){
     nombreLugar = prompt("¿A cual ciudad quieres ir?");
+    console.log("Ciudad: " + nombreLugar)
     diaEntrada = prompt("¿Cual seria el dia de llegada? DD/MM/AAAA");
+    console.log("Dia llegada: " + diaEntrada)
     diaSalida = prompt("Cual seria el dia de salida? DD/MM/AAAA");
+    console.log("Dia salida: " + diaSalida)
         while (true) {
             nombrePropiedad = prompt("¿Qué propiedad deseas alquilar?\nEscribe: Casa, Departamento o Duplex").toLowerCase();
             cantPersonas = parseInt(prompt("¿Cuántas personas ingresarán?"));
             if (nombrePropiedad === "casa" && cantPersonas <= 10) {
                 alert("Reserva exitosa para una casa.");
+                console.log("Propiedad: Casa")
+                console.log("Cantidad de personas: " + cantPersonas)
                 break; 
             } else if (nombrePropiedad === "departamento" && cantPersonas <= 6) {
                 alert("Reserva exitosa para un departamento.");
+                console.log("Propiedad: Departamento")
+                console.log("Cantidad de personas: " + cantPersonas)
                 break; 
             } else if (nombrePropiedad === "duplex" && cantPersonas <= 5) {
                 alert("Reserva exitosa para un dúplex.");
+                console.log("Propiedad: Duplex")
+                console.log("Cantidad de personas: " + cantPersonas)
                 break; 
             } else {
                 if (nombrePropiedad === "casa" && cantPersonas > 10) {
