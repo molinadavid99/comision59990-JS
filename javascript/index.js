@@ -21,9 +21,44 @@ let cantPersonas;
 let nombreLugar;
 let nombrePropiedad;
 
+function ciudadesParaReservar() {
+    let ciudadesDisponibles = [
+        {
+            ciudad: "Buenos Aires",
+            propiedad: "Casa",
+            nroHabitaciones: 4,
+            ofrece: "Casa amoblada con Wifi, Tv, Lavaropas y terraza",
+        },
+        {
+            ciudad: "Rio de Janeiro",
+            propiedad: "Departamento",
+            nrohabitaciones: 3,
+            ofrece: "Departamento amoblado con Wifi, Tv y balcon",
+        },
+        {
+            ciudad: "Ciudad de Mexico",
+            propiedad: "Duplex",
+            nrohabitaciones: 5,
+            ofrece: "Duplex amoblado con Wifi, Tv y terraza",
+        },
+        {
+            ciudad: "New York",
+            propiedad: "Departamento",
+            nrohabitaciones: 2,
+            ofrece: "Departamento amoblado con Wifi, Tv, Lavaropas",
+        }
+    ];
+    for (let i = 0; i < ciudadesDisponibles.length; i++) {
+        nombreLugar += ciudadesDisponibles[i].ciudad + "\n";
+    }    
+
+    alert("Te mostramos las ciudades disponibles para buscar reservaciones de propiedades:\n" + nombreLugar);
+    console.log (nombreLugar)
+    ciudadReservada = prompt(" Cual ciudad elijes para buscar reservas?")
+}
+
+
 function formularioReserva(){
-    nombreLugar = prompt("¿A cual ciudad quieres ir?");
-    console.log("Ciudad: " + nombreLugar)
     diaEntrada = prompt("¿Cual seria el dia de llegada? DD/MM/AAAA");
     console.log("Dia llegada: " + diaEntrada)
     diaSalida = prompt("Cual seria el dia de salida? DD/MM/AAAA");
@@ -59,5 +94,6 @@ function formularioReserva(){
             }
         }
     }
+    ciudadesParaReservar()
     formularioReserva ();
     alert (usuario + " te mostramos a continuacion el resumen de tu reserva " + "\n1 Ubicacion: " + nombreLugar + "\n2 Dia de entrada: " + diaEntrada + "\n3 Dia de salida: " + diaSalida + "\n4 Cant de personas: " + cantPersonas + "\n5 Propiedad: " + nombrePropiedad + "\n Gracias por reservar con nosotros dentro de minutos nos comunicaremos contigo para seguir mas detalles de la reserva!")
