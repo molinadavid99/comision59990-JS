@@ -1,158 +1,190 @@
-//crea una funcion para registrar personas en una plataforma de alojamientos por ciudades
-//se consulta ciudad, checkin y checkout, cant de personas y al final el resumen con el precio final.
+///Codigo para una plataforma de reservas de propiedades en Argentina.
+const ciudades = [
+    { nombre: "Buenos Aires", maxPersonas: 6, precioPorNoche: 1500, propiedad: "Casa", habitaciones: 4, caracteristicas: "Casa amoblada con Wifi, Tv, lavarropas, terraza, quincho con pileta" },
+    { nombre: "Mendoza", maxPersonas: 4, precioPorNoche: 2000, propiedad: "Departamento", habitaciones: 3, caracteristicas: "Departamento amoblado con Wifi, Tv y balcón con asador" },
+    { nombre: "Córdoba", maxPersonas: 7, precioPorNoche: 2500, propiedad: "Duplex", habitaciones: 5, caracteristicas: "Duplex amoblado con Wifi, Tv y terraza y quincho" },
+    { nombre: "Bariloche", maxPersonas: 4, precioPorNoche: 3000, propiedad: "Departamento", habitaciones: 2, caracteristicas: "Departamento amoblado con Wifi, Tv, lavarropas" }
+];
 
-function saludodeBienvenida (){
-    console.log("Bienvenido a Bamboo tu mejor aliado para elegir la propiedad que desees en el lugar de tus sueños, a continuacion deberás completar un formulario de reserva para asi registrar tu solicitud")
+const form = document.getElementById("miFormulario");
+const mensajeDiv = document.getElementById("mensaje");
+const detalleReservaDiv = document.getElementById("detalleReserva");
+
+form.addEventListener("submit", manejarReserva);
+document.getElementById("confirmarReserva").addEventListener("click", mostrarFormularioCorreo);
+document.getElementById("cancelarReserva").addEventListener("click", cancelarReserva);
+
+function manejarReserva(event) {
+    event.preventDefault();
+    limpiarMensaje();
+
+    const reserva = obtenerDatosReserva();
+    if (!validarFechas(reserva.checkin, reserva.checkout)) return;
+    
+    const ciudad = ciudades.find(c => c.nombre === reserva.localidad);
+    if (!ciudad) return mostrarMensaje("Lugar no válido.", "error");
+    if (reserva.personasCantidad > ciudad.maxPersonas) return mostrarMensaje(`Lo siento, no poseemos propiedades en ${ciudad.nombre} para esa cantidad de personas.`, "error");
+
+    reserva.nights = calcularNoches(reserva.checkin, reserva.checkout);
+    reserva.totalPrice = calcularPrecio(ciudad.precioPorNoche, reserva.nights);
+    mostrarResumenReserva(ciudad, reserva);
+    guardarReservaEnStorage(reserva);
+    detalleReservaDiv.style.display = "block";
 }
 
-saludodeBienvenida();
-
-function nombreUsuario (){
-    usuario = prompt("Primero necesitaremos tu nombre:")
-    console.log("Hola " + usuario)
+function mostrarFormularioCorreo() {
+    detalleReservaDiv.style.display = "none";
+    mensajeDiv.innerHTML = `
+        <div class="form-group">
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" placeholder="Introduce tu correo">
+            <button id="enviarEmail" class="boton">Enviar</button>
+        </div>`;
+    document.getElementById("enviarEmail").addEventListener("click", enviarCorreo);
 }
-nombreUsuario ();
 
-function formularioReserva() {
-    let ciudadesDisponibles = [
-        {
-            ciudad: "Buenos Aires",
-            propiedad: "Casa",
-            nroHabitaciones: 4,
-            maxPersonas: 5,
-            ofrece: "Casa amoblada con Wifi, Tv, Lavaropas y terraza",
-            precio: 8000,
-            moneda: "Pesos Arg"
-        },
-        {
-            ciudad: "Rio de Janeiro",
-            propiedad: "Departamento",
-            nroHabitaciones: 3,
-            maxPersonas: 4,
-            ofrece: "Departamento amoblado con Wifi, Tv y balcon",
-            precio: 9500,
-            moneda: "Pesos Arg"
-        },
-        {
-            ciudad: "Ciudad de Mexico",
-            propiedad: "Duplex",
-            nroHabitaciones: 5,
-            maxPersonas: 6,
-            ofrece: "Duplex amoblado con Wifi, Tv y terraza",
-            precio: 9900,
-            moneda: "Pesos Arg"
-        },
-        {
-            ciudad: "New York",
-            propiedad: "Departamento",
-            nroHabitaciones: 2,
-            maxPersonas: 3,
-            ofrece: "Departamento amoblado con Wifi, Tv, Lavaropas",
-            precio: 10000,
-            moneda: "Pesos Arg"
-        }
-        ];
-        
-    let continuar = true; 
-    let ciudadSeleccionada = null;
-            
-    while (continuar) {
-        let ciudadReservada = prompt("Elige una ciudad para buscar reservas o escribe 'salir' para terminar:\nBuenos Aires, Rio de Janeiro, Ciudad de Mexico, New York").toLowerCase();
-                
-        if (ciudadReservada === "salir") {
-            continuar = false;
-            alert("Has decidido salir.");
-            return;
-            }
-        
-        switch (ciudadReservada) {
-            case "buenos aires":
-                ciudadSeleccionada = ciudadesDisponibles[0];
-                break;
-            case "rio de janeiro":
-                ciudadSeleccionada = ciudadesDisponibles[1];
-                break;
-            case "ciudad de mexico":
-                ciudadSeleccionada = ciudadesDisponibles[2];
-                break;
-            case "new york":
-                ciudadSeleccionada = ciudadesDisponibles[3];
-                break;
-            default: 
-                alert("Ciudad no válida. Por favor, elige una opción correcta o escribe 'salir'.");
-                continue;
-            }
-        
-        if (ciudadSeleccionada) {
-            alert(
-                "En esa Ciudad tenemos disponible esto para vos: " + "\n" +
-                "Ciudad: " + ciudadSeleccionada.ciudad + "\n" +
-                "Propiedad: " + ciudadSeleccionada.propiedad + "\n" +
-                "Habitaciones: " + ciudadSeleccionada.nroHabitaciones + "\n" +
-                "Cant de personas: " + ciudadSeleccionada.maxPersonas + "\n" +
-                "Ofrece: " + ciudadSeleccionada.ofrece + "\n" +
-                "Precio por noche: " + ciudadSeleccionada.precio + " " + ciudadSeleccionada.moneda
-                );
-                break;
-                }
-            }
-        
-        let diaEntrada, diaSalida, cantidadNoches;
-        while (true) {
-            diaEntrada = prompt("¿Cuál es la fecha del checkin? Ingrésalo con el formato YYYY-MM-DD:");
-            let fechaEntrada = new Date(diaEntrada);
-        
-            if (isNaN(fechaEntrada.getTime())) {
-                alert("La fecha de checkin ingresada no es válida. Inténtalo de nuevo.");
-                continue;
-            }
-        
-            diaSalida = prompt("¿Cuál es la fecha del checkout? Ingrésalo con el formato YYYY-MM-DD:");
-            let fechaSalida = new Date(diaSalida);
-        
-            if (isNaN(fechaSalida.getTime())) {
-                alert("La fecha de checkout ingresada no es válida. Inténtalo de nuevo.");
-                continue;
-            } else if (fechaSalida <= fechaEntrada) {
-                alert("La fecha de checkout debe ser posterior a la fecha de checkin.");
-                continue;
-            }
-        
-            let diferenciaTiempo = fechaSalida.getTime() - fechaEntrada.getTime();
-            cantidadNoches = Math.ceil(diferenciaTiempo / (1000 * 60 * 60 * 24));
-            break;
-            }
-        
-        let cantPersonas;
-        while (true) {
-                cantPersonas = parseInt(prompt("¿Cuantas personas ingresaran a la propiedad?"));
-                if (isNaN(cantPersonas)) {
-                    alert("Por favor, ingresa un número válido.");
-                    continue;
-                }
-        
-                if (cantPersonas > ciudadSeleccionada.maxPersonas) {
-                    alert("Error: No se permiten más de " + ciudadSeleccionada.maxPersonas + " personas.");
-                } else {
-                    alert("¡Perfecto! A continuación te mostraremos un resumen de tu reservación.");
-                    break;
-                }
-            }
-        
-        let precioFinal = ciudadSeleccionada.precio * cantidadNoches;
-            alert("Resumen de la reserva:" + "\n" +
-            "Ciudad: " + ciudadSeleccionada.ciudad + "\n" +
-            "Propiedad: " + ciudadSeleccionada.propiedad + "\n" +
-            "Noches: " + cantidadNoches + "\n" +
-            "Personas: " + cantPersonas + "\n" +
-            "Precio total: " + precioFinal + " " + ciudadSeleccionada.moneda);
-            
-            console.log ("Resumen de la reserva:" + "\n" +
-            "Ciudad: " + ciudadSeleccionada.ciudad + "\n" +
-            "Propiedad: " + ciudadSeleccionada.propiedad + "\n" +
-            "Noches: " + cantidadNoches + "\n" +
-            "Personas: " + cantPersonas + "\n" +
-            "Precio total: " + precioFinal + " " + ciudadSeleccionada.moneda);
-        }
+function enviarCorreo() {
+    const email = document.getElementById("email").value;
+    email ? mostrarMensaje("Gracias, ya le enviamos un correo para seguir la reserva.", "success") 
+        : mostrarMensaje("Por favor, ingrese un correo válido.", "error");
+}
 
-    formularioReserva ();
+function cancelarReserva() {
+    mostrarMensaje("Reserva cancelada", "error");
+    detalleReservaDiv.style.display = "none";
+}
+
+function mostrarMensaje(mensaje, tipo) {
+    mensajeDiv.className = `mensaje ${tipo}`;
+    mensajeDiv.innerHTML = mensaje;
+    mensajeDiv.style.display = "block";
+}
+
+function limpiarMensaje() {
+    mensajeDiv.innerHTML = "";
+    mensajeDiv.style.display = "none";
+}
+
+function obtenerDatosReserva() {
+    return {
+        localidad: document.getElementById("localidad").value,
+        personasCantidad: parseInt(document.getElementById("personasCantidad").value),
+        checkin: new Date(document.getElementById("checkin").value),
+        checkout: new Date(document.getElementById("checkout").value)
+    };
+}
+
+function validarFechas(checkin, checkout) {
+    if (isNaN(checkin) || isNaN(checkout) || checkout <= checkin) {
+        mostrarMensaje("Por favor, ingresa una fecha de entrada y salida válida.", "error");
+        return false;
+    }
+    return true;
+}
+
+function calcularNoches(checkin, checkout) {
+    return (checkout - checkin) / (1000 * 60 * 60 * 24);
+}
+
+function calcularPrecio(precioPorNoche, nights) {
+    return precioPorNoche * nights;
+}
+
+function mostrarResumenReserva(ciudad, reserva) {
+    const mensaje = `
+        <strong>Resumen de la reserva:</strong><br>
+        Lugar: ${ciudad.nombre}<br>
+        Propiedad: ${ciudad.propiedad}<br>
+        Habitaciones: ${ciudad.habitaciones}<br>
+        Características: ${ciudad.caracteristicas}<br>
+        Personas: ${reserva.personasCantidad}<br>
+        Noches: ${reserva.nights}<br>
+        Precio total: $${reserva.totalPrice} Pesos Argentinos`;
+    mostrarMensaje(mensaje, "success");
+}
+
+function guardarReservaEnStorage(reserva) {
+    localStorage.setItem("reserva", JSON.stringify(reserva));
+}
+
+function limpiarFormulario() {
+    form.reset();
+    detalleReservaDiv.style.display = "none";
+    limpiarMensaje();
+}
+
+///Codigo al hacer click en la opcion "ver mas" de las cards
+
+const infoCasa = document.getElementById("infoCasa")
+
+infoCasa.addEventListener("click", ()=> {
+    Swal.fire({
+        title: "Casa Luxury",
+        text: "Ubicada a las afueras de la Ciudad de Buenos Aires, es una acogedora y lujuriosa casa",
+        imageUrl: "https://images.homify.com/v1526143386/p/photo/image/2556480/2.jpg",
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: "Casa moderna en Buenos Aires",
+        backdrop: `rgba(35, 124, 35)`
+    });
+}) 
+
+const infoDuplex = document.getElementById("infoDuplex")
+
+infoDuplex.addEventListener("click", ()=> {
+    Swal.fire({
+        title: "Duplex Confort",
+        text: "Ubicado al norte de la ciudad de Cordoba, un increible duplex en una zona tranquila",
+        imageUrl: "https://caster.com.pe/wp-content/uploads/2022/11/1.png",
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: "Duplex Cordoba",
+        backdrop: `rgba(35, 124, 35)`
+    });
+}) 
+
+
+const images = [
+    {
+        url: "https://imgar.zonapropcdn.com/avisos/1/00/54/41/17/97/360x266/1933606966.jpg?isFirstImage=true",
+        title: "Departamento Gold",
+        description: "Ubicado en el centro de Mendoza donde estas cerca de todo lo que te puede ofrecer la ciudad"
+    },
+    {
+        url: "https://departamentoenbariloche.com/wp-content/uploads/2021/05/studio-bustillo-12.jpg",
+        title: "Departamento San Bernardo",
+        description: "Ubicado en Bariloche, es imposible que no quieras conocer este departamento en esta hermosa ciudad"
+    },
+];
+
+let currentIndex = 0;
+
+function cambiodeImagen(index) {
+    Swal.fire({
+        title: images[index].title,
+        text: images[index].description,
+        imageUrl: images[index].url,
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: images[index].title,
+        showCancelButton: true,
+        showConfirmButton: true,
+        showDenyButton: true, 
+        cancelButtonText: "Anterior",
+        confirmButtonText: "Siguiente",
+        denyButtonText: "Salir",
+        backdrop: `rgba(35, 124, 35)`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            currentIndex = (currentIndex + 1) % images.length;
+            cambiodeImagen(currentIndex);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            cambiodeImagen(currentIndex);
+        }
+    });
+}
+
+document.getElementById("infoDepto").addEventListener("click", () => {
+    cambiodeImagen(currentIndex);
+});
