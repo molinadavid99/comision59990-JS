@@ -23,7 +23,7 @@ Esta aplicación permite a los usuarios realizar reservas de propiedades en dife
   Una vez confirmada, se solicita el correo electrónico para enviar detalles adicionales.
 
 - **Mensajes interactivos**:  
-  Posee SweetAlert para mostrar información y capturar interacciones de manera elegante.
+  Posee SweetAlert para mostrar información sobre las propiedades disponibles.
 
 ---
 ¡Explora las funcionalidades y realiza tu reserva con esta plataforma!
