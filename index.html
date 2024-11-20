@@ -78,7 +78,7 @@
             <div class="reservacion">
                 <form id="miFormulario" class="reservation-form">
                     <div class="form-group">
-                        <label for="localidad">Selecciona el lugar:</label>
+                        <label for="localidad">Selecciona la ciudad:</label>
                         <select id="localidad" name="localidad" required>
                             <option value="" disabled selected>Selecciona un lugar</option>
                             <option value="Mendoza">Mendoza</option>
@@ -116,6 +116,10 @@
                     <button id="confirmarReserva" class="boton">Confirmar Reserva</button>
                     <button id="cancelarReserva" class="boton">Cancelar Reserva</button>
                 </div> 
+                <div id="clima" class="clima">
+                    <h3>Prepárate para Tu Viaje: Clima Actual en la Ciudad Elegida</h3>
+                    <p id="descripcionClima">¡Mejor saber el clima antes de reservar!</p>
+                </div>
         </section>
         <section class="serviciosBamboo"> 
             <h3>¿Que tenemos para&nbsp; <span class="palabraClave"> ofrecerte? </span></h3>
@@ -165,7 +169,8 @@
             </div>
         </footer>
     </main>
-    <script src="./javascript/index.js"></script>
+    
+    <script src="./javascript/index.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
